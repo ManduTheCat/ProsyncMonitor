@@ -44,6 +44,11 @@ public class View{
             asciiTable.addRow("TOPOLOGY", "PSYC ID", "SOURCE TSN", "TARGET TSN", "TSN GAP",
                     LocalDateTime.now().format(formatter) );
             asciiTable.addRule();
+            
+            for (Topology topology: topologyList){
+                String fileName = topology.getTopologyName();
+
+            }
 
             for (Topology topology : topologyList) {
                 String targetCommitTime = "null";
@@ -60,7 +65,8 @@ public class View{
                     String targetCn = topology.runTargetChangeNumberQuery();
                     String sourceRes = String.valueOf(sourceCn);
                     String targetRes = String.valueOf(targetCn);
-                    String diffRes = String.valueOf(Long.parseLong(sourceCn) - Long.parseLong(targetCn));
+                    Long gapDiff = Long.parseLong(sourceCn) - Long.parseLong(targetCn);
+                    String diffRes = String.valueOf(gapDiff);
                     if(sourceCn== null || sourceCn.length() == 0){
                         log.error("source TSN or SCN is empty ");
                         sourceRes = "source fail";
