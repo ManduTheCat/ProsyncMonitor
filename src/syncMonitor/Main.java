@@ -34,11 +34,11 @@ public class Main {
         // 메니저로 커넥션 수행 및 map 으로 관리
         SessionManager sessionManager = SessionManager.getInstance();
         // sessionMap 으로 만들어 토플러지 팩토리에 전달후 전체 토플러지 모음 생성
-        // sessionMap 은 일종의 커낵션 풀
+        // sessionMap 은 일종의 커낵션 풀 처럼 만드려했음
         // 토플러지는 커넥션 풀에서 커낵션을 꺼내 쓰는 개념
         Map<String, SyncMonitorSession> sessionMap = sessionManager.getConnetcionMap(topologyConfigList);
         List<Topology> topologies = topologyFactory.genToplogy(topologyConfigList, sessionMap);
-
+        log.info("set delay : " + monitorConfig.getDelay());
         View view = new View(topologies, monitorConfig);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -68,7 +68,7 @@ public class Main {
                         return; // main 종료
                     }
                 }
-                Thread.sleep(1000);
+                Thread.sleep(Long.parseLong(monitorConfig.getDelay()) <= 0 ?60000: Long.parseLong(monitorConfig.getDelay()));
             }
         } catch (Exception e) {
             e.printStackTrace();
