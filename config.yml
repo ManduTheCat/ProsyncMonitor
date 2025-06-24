@@ -1,20 +1,21 @@
 monitor:
-  mode: 11
+  mode: wide
+  delay: 60000
 topology:
-  - name: ttt
+  - name: TtoO_US_PROSYNC_I2G
     source:
-      dbType: tibero
-      ip: 192.168.1.187
-      port: 4628
-      connId: tibero
-      connPwd: tmax
-      proSyncUser: jsh_ott
-      dbSid: tibero7_2
-    target:
       dbType: tibero
       ip: 192.168.1.187
       port: 4628
       connId: sys
       connPwd: tibero
-      proSyncUser: jsh_ott
+      proSyncUser: US_PROSYNC_I2G
       dbSid: tibero7_2
+    target:
+      dbType: oracle
+      ip: 192.168.1.188
+      port: 1525
+      connId: JSH_OTT
+      connPwd: jsh
+      proSyncUser: US_PROSYNC_I2G
+      dbSid: oraclesb

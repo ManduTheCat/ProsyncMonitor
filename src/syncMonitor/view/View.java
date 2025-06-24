@@ -9,9 +9,14 @@ import lombok.extern.slf4j.Slf4j;
 import syncMonitor.config.wrapper.MonitorConfig;
 import syncMonitor.topology.Topology;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class View{
@@ -44,10 +49,12 @@ public class View{
             asciiTable.addRow("TOPOLOGY", "PSYC ID", "SOURCE TSN", "TARGET TSN", "TSN GAP",
                     LocalDateTime.now().format(formatter) );
             asciiTable.addRule();
+            Map<String, File> fileMap = new HashMap<>();
             
             for (Topology topology: topologyList){
-                String fileName = topology.getTopologyName();
-
+//                String fileName = topology.getTopologyName();
+//                String dir = File.separator+fileName;
+//                fileMap.put(fileName, new File(dir));
             }
 
             for (Topology topology : topologyList) {
@@ -66,7 +73,11 @@ public class View{
                     String sourceRes = String.valueOf(sourceCn);
                     String targetRes = String.valueOf(targetCn);
                     Long gapDiff = Long.parseLong(sourceCn) - Long.parseLong(targetCn);
-                    String diffRes = String.valueOf(gapDiff);
+                    String diffString = String.valueOf(gapDiff);
+                    File gaplogFile = fileMap.get(topology.getTopologyName());
+                    try(BufferedWriter bw =  new BufferedWriter(new FileWriter(gaplogFile.getPath()))){
+                        bw.write(LocalDateTime.now().format(formatter) + ": " + topology.getTopologyName() + " gap" + diffString );
+                    }
                     if(sourceCn== null || sourceCn.length() == 0){
                         log.error("source TSN or SCN is empty ");
                         sourceRes = "source fail";
@@ -76,13 +87,13 @@ public class View{
                         targetRes = "target fail";
                     }
                     if(targetCn == null || sourceCn== null){
-                        diffRes = "fail";
+                        diffString = "fail";
                     }
                     if(topology.getTopologyName()== null){
                         log.error("topology name is null check config");
                     }
                     asciiTable.addRow(topology.getTopologyName() == null ? "null" : topology.getTopologyName(),
-                            topology.getProSyncUser(), sourceRes, targetRes, diffRes, targetCommitTime);
+                            topology.getProSyncUser(), sourceRes, targetRes, diffString, targetCommitTime);
                     asciiTable.addRule();
                 }catch (Exception e){
                     String sourceCn = topology.getTopologyName()+" src fail";
